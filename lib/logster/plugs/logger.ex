@@ -57,7 +57,10 @@ defmodule Logster.Plugs.Logger do
             Application.get_env(:logster, :allowed_headers, @default_allowed_headers)
           )
         )
+        |> Keyword.merge(Logger.metadata())
         |> exclude(Keyword.get(opts, :excludes, []))
+        |> put_field(:level, renames, log_level(conn,opts))
+        |> put_field(:when, renames, DateTime.now!("Etc/UTC") |> DateTime.to_iso8601)
         |> formatter.format
       end)
 
